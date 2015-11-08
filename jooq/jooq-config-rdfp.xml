@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <jdbc>
+        <driver>org.postgresql.Driver</driver>
+        <url>jdbc:postgresql://localhost:5432/rdfp</url>
+        <user>rdfp</user>
+        <password>rdfp</password>
+    </jdbc>
+
+    <generator>
+        <database>
+            <name>org.jooq.util.postgres.PostgresDatabase</name>
+            <includes>.*</includes>
+        </database>
+
+        <generate>
+            <pojos>false</pojos>
+            <immutablePojos>true</immutablePojos>
+            <jpaAnnotations>true</jpaAnnotations>
+            <validationAnnotations>true</validationAnnotations>
+        </generate>
+
+        <target>
+            <packageName>com.github.akovari.rdfp.data.schema</packageName>
+            <directory>src/main/java</directory>
+        </target>
+    </generator>
+</configuration>
