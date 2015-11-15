@@ -2,7 +2,9 @@ package com.github.akovari.rdfp.data.cases
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Directives
-import com.github.akovari.rdfp.data.JsonProtocols
+import com.github.akovari.rdfp.api.ql.UQLContext.UnifiedResult.UnifiedResultFromResourceType
+import com.github.akovari.rdfp.api.ql.{UQLContext, UQLParser}
+import com.github.akovari.rdfp.data.{ResourceType, JsonProtocols}
 import com.github.akovari.typesafeSalesforce.util.SalesForceConnection
 
 import scala.concurrent.ExecutionContext
@@ -21,5 +23,16 @@ class CasesService(casesResource: CasesResource)(implicit executionContext: Exec
             casesResource.getCase(caseNumber)
           }
         }
+    } ~ path("case") {
+      parameter("where") { uql =>
+        get {
+          complete {
+            casesResource.getCasesByFilter(
+              UQLContext.conditionToSOQLConditionWithoutLimit(
+                UQLParser.parseUQL(s"""entity = "${ResourceType.SupportCase}" and $uql""").condition
+              )(UnifiedResultFromResourceType(ResourceType.SupportCase)))
+          }
+        }
+      }
     }
 }

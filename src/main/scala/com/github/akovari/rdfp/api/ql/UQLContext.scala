@@ -264,7 +264,7 @@ sealed trait UQL2SOQLTransformer {
     else fcond
   }
 
-  private def conditionToSOQLConditionWithoutLimit(condition: UQLParser.Condition)(implicit resourceType: UnifiedResult.UnifiedResultFromResourceType): Filter = condition match {
+  def conditionToSOQLConditionWithoutLimit(condition: UQLParser.Condition)(implicit resourceType: UnifiedResult.UnifiedResultFromResourceType): Filter = condition match {
     case UQLParser.EqualsCondition(name, value) =>
       fieldToEntityField(name) :== typedValueToField(value)
     case UQLParser.NotEqualsCondition(name, value) =>

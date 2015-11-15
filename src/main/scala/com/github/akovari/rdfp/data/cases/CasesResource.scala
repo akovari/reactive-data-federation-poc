@@ -15,6 +15,8 @@ import com.github.akovari.typesafeSalesforce.query._
   */
 trait CasesResource {
   def getCase(caseNumber: String)(implicit conn: SalesForceConnection): Future[Case]
+
+  def getCasesByFilter(filter: Filter)(implicit conn: SalesForceConnection): Future[Seq[Case]]
 }
 
 class CasesResourceImpl extends CasesResource {
@@ -27,5 +29,13 @@ class CasesResourceImpl extends CasesResource {
     conn.query(q).mapTo[Seq[enterprise.Case]].map(_.head).map { c =>
       Case(c.getCaseNumber, c.getStatus)
     }
+  }
+
+  override def getCasesByFilter(filter: Filter)(implicit conn: SalesForceConnection): Future[Seq[Case]] = {
+    val q = SalesForceQueryCache.caseQueryWithFilter(filter, None)
+
+    conn.query(q).mapTo[Seq[enterprise.Case]].map(_.map { c =>
+      Case(c.getCaseNumber, c.getStatus)
+    })
   }
 }

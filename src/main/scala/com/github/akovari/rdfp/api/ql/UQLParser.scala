@@ -6,8 +6,8 @@ import org.parboiled.errors.ErrorUtils
 import org.parboiled.scala._
 
 /**
- * Created by akovari on 18.8.2014.
- */
+  * Created by akovari on 18.8.2014.
+  */
 object UQLParser {
   val True = BooleanNode(value = true)
   val False = BooleanNode(value = false)
@@ -80,6 +80,9 @@ object UQLParser {
   case class BooleanNode(value: Boolean) extends AstValue(value)
 
   case object Null extends NullValue
+
+  def parseUQL(uql: String): Filter = new UQLParser().parseUQL(uql)
+
 }
 
 class UQLParser extends CommonParser {
@@ -204,27 +207,35 @@ class UQLParser extends CommonParser {
 
   def UQLIdent: Rule1[StringNode] = rule(WhiteSpace ~ (Ident ~> StringNode) ~ WhiteSpace)
 
-  def UQLTrue: Rule1[BooleanNode] = rule { WhiteSpace ~ "true" ~ WhiteSpace ~ push(True) }
+  def UQLTrue: Rule1[BooleanNode] = rule {
+    WhiteSpace ~ "true" ~ WhiteSpace ~ push(True)
+  }
 
-  def UQLFalse: Rule1[BooleanNode] = rule { WhiteSpace ~ "false" ~ WhiteSpace ~ push(False) }
+  def UQLFalse: Rule1[BooleanNode] = rule {
+    WhiteSpace ~ "false" ~ WhiteSpace ~ push(False)
+  }
 
-  def UQLNull: Rule1[NullValue] = rule { WhiteSpace ~ "null" ~ WhiteSpace ~ push(Null) }
+  def UQLNull: Rule1[NullValue] = rule {
+    WhiteSpace ~ "null" ~ WhiteSpace ~ push(Null)
+  }
 
   def UQLNumber: Rule1[NumberNode] = rule {
     WhiteSpace ~ group(Integer ~ optional(Frac ~ optional(Exp))) ~> (s => NumberNode(BigDecimal(s))) ~ WhiteSpace
   }
 
-  def UQLArray: Rule1[ArrayNode] = rule { WhiteSpace ~ "[ " ~ WhiteSpace ~ zeroOrMore(Value, separator = ", ") ~ WhiteSpace ~ "] " ~ WhiteSpace ~~> ArrayNode }
+  def UQLArray: Rule1[ArrayNode] = rule {
+    WhiteSpace ~ "[ " ~ WhiteSpace ~ zeroOrMore(Value, separator = ", ") ~ WhiteSpace ~ "] " ~ WhiteSpace ~~> ArrayNode
+  }
 
   def UQLDate: Rule1[DateTimeNode] = rule {
-    WhiteSpace ~ group(nTimes(4, Digit) ~ ("/"|"-") ~ nTimes(2, Digit) ~ ("/"|"-") ~ nTimes(2, Digit) ~ optional("T" ~ nTimes(2, Digit) ~ ":" ~ nTimes(2, Digit) ~ ":" ~ nTimes(2, Digit) ~ "." ~ nTimes(3, Digit) ~ ("Z" | (("+" | "-") ~ nTimes(2, Digit) ~ ":" ~ nTimes(2, Digit))))) ~> (d => DateTimeNode(dateTimeFormatter.parseDateTime(d)))
+    WhiteSpace ~ group(nTimes(4, Digit) ~ ("/" | "-") ~ nTimes(2, Digit) ~ ("/" | "-") ~ nTimes(2, Digit) ~ optional("T" ~ nTimes(2, Digit) ~ ":" ~ nTimes(2, Digit) ~ ":" ~ nTimes(2, Digit) ~ "." ~ nTimes(3, Digit) ~ ("Z" | (("+" | "-") ~ nTimes(2, Digit) ~ ":" ~ nTimes(2, Digit))))) ~> (d => DateTimeNode(dateTimeFormatter.parseDateTime(d)))
   }
 
   def parseUQL(uql: String): Filter = {
     val parsingResult = ReportingParseRunner(UQLFilter).run(uql)
     parsingResult.result match {
       case Some(astRoot) => astRoot
-      case None => throw new ParsingException(s"""Invalid UQL query: \n${ErrorUtils.printParseErrors(parsingResult)}""")
+      case None => throw new ParsingException( s"""Invalid UQL query: \n${ErrorUtils.printParseErrors(parsingResult)}""")
     }
   }
 }
