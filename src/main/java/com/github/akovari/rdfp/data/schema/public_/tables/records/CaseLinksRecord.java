@@ -12,11 +12,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record2;
-import org.jooq.Row2;
+import org.jooq.Record3;
+import org.jooq.Row3;
 import org.jooq.impl.UpdatableRecordImpl;
 
 
@@ -33,9 +34,9 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Entity
 @Table(name = "case_links", schema = "public")
-public class CaseLinksRecord extends UpdatableRecordImpl<CaseLinksRecord> implements Record2<Integer, String> {
+public class CaseLinksRecord extends UpdatableRecordImpl<CaseLinksRecord> implements Record3<Integer, String, String> {
 
-	private static final long serialVersionUID = -315091730;
+	private static final long serialVersionUID = 1487235117;
 
 	/**
 	 * Setter for <code>public.case_links.id</code>.
@@ -69,6 +70,23 @@ public class CaseLinksRecord extends UpdatableRecordImpl<CaseLinksRecord> implem
 		return (String) getValue(1);
 	}
 
+	/**
+	 * Setter for <code>public.case_links.case_id</code>.
+	 */
+	public void setCaseId(String value) {
+		setValue(2, value);
+	}
+
+	/**
+	 * Getter for <code>public.case_links.case_id</code>.
+	 */
+	@Column(name = "case_id", nullable = false, length = 8)
+	@NotNull
+	@Size(max = 8)
+	public String getCaseId() {
+		return (String) getValue(2);
+	}
+
 	// -------------------------------------------------------------------------
 	// Primary key information
 	// -------------------------------------------------------------------------
@@ -82,23 +100,23 @@ public class CaseLinksRecord extends UpdatableRecordImpl<CaseLinksRecord> implem
 	}
 
 	// -------------------------------------------------------------------------
-	// Record2 type implementation
+	// Record3 type implementation
 	// -------------------------------------------------------------------------
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Row2<Integer, String> fieldsRow() {
-		return (Row2) super.fieldsRow();
+	public Row3<Integer, String, String> fieldsRow() {
+		return (Row3) super.fieldsRow();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Row2<Integer, String> valuesRow() {
-		return (Row2) super.valuesRow();
+	public Row3<Integer, String, String> valuesRow() {
+		return (Row3) super.valuesRow();
 	}
 
 	/**
@@ -121,6 +139,14 @@ public class CaseLinksRecord extends UpdatableRecordImpl<CaseLinksRecord> implem
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Field<String> field3() {
+		return CaseLinks.CASE_LINKS.CASE_ID;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Integer value1() {
 		return getId();
 	}
@@ -131,6 +157,14 @@ public class CaseLinksRecord extends UpdatableRecordImpl<CaseLinksRecord> implem
 	@Override
 	public String value2() {
 		return getUrl();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String value3() {
+		return getCaseId();
 	}
 
 	/**
@@ -155,9 +189,19 @@ public class CaseLinksRecord extends UpdatableRecordImpl<CaseLinksRecord> implem
 	 * {@inheritDoc}
 	 */
 	@Override
-	public CaseLinksRecord values(Integer value1, String value2) {
+	public CaseLinksRecord value3(String value) {
+		setCaseId(value);
+		return this;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public CaseLinksRecord values(Integer value1, String value2, String value3) {
 		value1(value1);
 		value2(value2);
+		value3(value3);
 		return this;
 	}
 
@@ -175,10 +219,11 @@ public class CaseLinksRecord extends UpdatableRecordImpl<CaseLinksRecord> implem
 	/**
 	 * Create a detached, initialised CaseLinksRecord
 	 */
-	public CaseLinksRecord(Integer id, String url) {
+	public CaseLinksRecord(Integer id, String url, String caseId) {
 		super(CaseLinks.CASE_LINKS);
 
 		setValue(0, id);
 		setValue(1, url);
+		setValue(2, caseId);
 	}
 }

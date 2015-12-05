@@ -34,7 +34,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class CaseLinks extends TableImpl<CaseLinksRecord> {
 
-	private static final long serialVersionUID = 571271858;
+	private static final long serialVersionUID = 48889009;
 
 	/**
 	 * The reference instance of <code>public.case_links</code>
@@ -58,6 +58,11 @@ public class CaseLinks extends TableImpl<CaseLinksRecord> {
 	 * The column <code>public.case_links.url</code>.
 	 */
 	public final TableField<CaseLinksRecord, String> URL = createField("url", org.jooq.impl.SQLDataType.CLOB, this, "");
+
+	/**
+	 * The column <code>public.case_links.case_id</code>.
+	 */
+	public final TableField<CaseLinksRecord, String> CASE_ID = createField("case_id", org.jooq.impl.SQLDataType.CHAR.length(8).nullable(false), this, "");
 
 	/**
 	 * Create a <code>public.case_links</code> table reference

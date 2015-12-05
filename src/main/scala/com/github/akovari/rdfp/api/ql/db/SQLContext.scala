@@ -14,7 +14,6 @@ import com.github.akovari.rdfp.api.ql.UQLContext
  */
 object SQLContext {
   protected val sqlConfig = ConfigFactory.load("ql/sqlMappings.conf")
-  protected val metricsConfig = ConfigFactory.load("ql/metricsMappings.conf")
 
   def config(implicit entityType: UQLContext.UnifiedResult.UnifiedEntityType[_]) = entityType match {
     case resourceType: UQLContext.UnifiedResult.UnifiedResultFromResourceType => sqlConfig
@@ -38,9 +37,11 @@ object SQLContext {
     config(entityType).getString(s"${entityType.value.toString}.${table.getName + suffix.getOrElse("")}.alias")
 }
 
-sealed trait UnifiedTables {
-}
-
 object SQLTables {
+  import com.github.akovari.rdfp.data.schema.public_.Tables._
+
   def fields(tables: Table[_]*) = tables.map(_.fields()).flatten.toList.asJava
+
+  def CASE_LINKS_T(suffix: Option[String] = None)(implicit resourceType: UQLContext.UnifiedResult.UnifiedResultFromResourceType) = CASE_LINKS.as(aliasForTable(resourceType, CASE_LINKS, suffix))
+  def CASE_LINKS_T(implicit resourceType: UQLContext.UnifiedResult.UnifiedResultFromResourceType) = CASE_LINKS.as(aliasForTable(resourceType, CASE_LINKS))
 }

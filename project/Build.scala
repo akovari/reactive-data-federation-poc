@@ -56,6 +56,7 @@ object UnifiedDataServicesBuild extends Build {
   val jsonRpcV = "1.1"
   val typesafeSalesforceV = "1.0-SNAPSHOT"
   val saajV = "1.3.25"
+  val groovyV = "2.4.3"
 
   lazy val mainProject = Project(
     id = "main",
@@ -113,6 +114,7 @@ object UnifiedDataServicesBuild extends Build {
         "org.scala-lang.modules" %% "scala-async" % asyncV,
         "com.chuusai" %% "shapeless" % shapelessV,
         "com.sun.xml.messaging.saaj" % "saaj-impl" % saajV,
+        "org.codehaus.groovy" % "groovy" % groovyV,
 
         "org.postgresql" % "postgresql" % postgresV,
 

@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
 /**
@@ -29,22 +30,26 @@ import javax.validation.constraints.NotNull;
 @Table(name = "case_links", schema = "public")
 public class CaseLinks implements Serializable {
 
-	private static final long serialVersionUID = 134901821;
+	private static final long serialVersionUID = -342302737;
 
 	private final Integer id;
 	private final String  url;
+	private final String  caseId;
 
 	public CaseLinks(CaseLinks value) {
 		this.id = value.id;
 		this.url = value.url;
+		this.caseId = value.caseId;
 	}
 
 	public CaseLinks(
 		Integer id,
-		String  url
+		String  url,
+		String  caseId
 	) {
 		this.id = id;
 		this.url = url;
+		this.caseId = caseId;
 	}
 
 	@Id
@@ -59,12 +64,20 @@ public class CaseLinks implements Serializable {
 		return this.url;
 	}
 
+	@Column(name = "case_id", nullable = false, length = 8)
+	@NotNull
+	@Size(max = 8)
+	public String getCaseId() {
+		return this.caseId;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("CaseLinks (");
 
 		sb.append(id);
 		sb.append(", ").append(url);
+		sb.append(", ").append(caseId);
 
 		sb.append(")");
 		return sb.toString();
