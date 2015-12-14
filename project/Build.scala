@@ -20,12 +20,13 @@ object UnifiedDataServicesBuild extends Build {
     "Red Hat Tech Preview" at "http://maven.repository.redhat.com/techpreview/all/",
     Resolver.sonatypeRepo("public"),
     "bintray-flossware-maven" at "http://dl.bintray.com/flossware/maven",
-    "bintray-solenopsis-maven" at "http://dl.bintray.com/solenopsis/maven"
+    "bintray-solenopsis-maven" at "http://dl.bintray.com/solenopsis/maven",
+    "hseeberger at bintray" at "http://dl.bintray.com/hseeberger/maven"
   )
 
   val scalaV = "2.11.7"
   val akkaV = "2.4.0"
-  val akkaHttpV = "2.0-M1"
+  val akkaHttpV = "2.0-M2"
   val jsr181V = "1.0-MR1"
   val javaxActivationV = "1.1-rev-1"
   val javaxValidationV = "1.1.0.Final"
@@ -57,6 +58,7 @@ object UnifiedDataServicesBuild extends Build {
   val typesafeSalesforceV = "1.0-SNAPSHOT"
   val saajV = "1.3.25"
   val groovyV = "2.4.3"
+  val akkaJson4sV = "1.3.0"
 
   lazy val mainProject = Project(
     id = "main",
@@ -86,7 +88,7 @@ object UnifiedDataServicesBuild extends Build {
         "com.typesafe.akka" %% "akka-stream-experimental" % akkaHttpV,
         "com.typesafe.akka" %% "akka-http-core-experimental" % akkaHttpV,
         "com.typesafe.akka" %% "akka-http-experimental" % akkaHttpV,
-        "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaHttpV,
+        "de.heikoseeberger" %% "akka-http-json4s" % akkaJson4sV,
 
         "javax.jws" % "jsr181-api" % jsr181V,
         "javax.ws.rs" % "javax.ws.rs-api" % jaxrsV,

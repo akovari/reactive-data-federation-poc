@@ -69,18 +69,18 @@ sealed trait Event
 sealed trait ReceivedEvent extends Event
 sealed trait SentEvent extends Event
 
-final case class EvaluateScript(body: String, args: Seq[String] = Seq.empty) extends ReceivedEvent
+case class EvaluateScript(body: String, args: Seq[String] = Seq.empty) extends ReceivedEvent
 
-final case object InvokeLoadFunction extends ReceivedEvent
-final case class EmitEvent(data: Emitable) extends ReceivedEvent
-final case class EmitKVEvent(key: AnyRef, value: Any) extends ReceivedEvent
-final case object PhaseDoneEvent extends ReceivedEvent {val instance = this}
+case object InvokeLoadFunction extends ReceivedEvent
+case class EmitEvent(data: Emitable) extends ReceivedEvent
+case class EmitKVEvent(key: AnyRef, value: Any) extends ReceivedEvent
+case object PhaseDoneEvent extends ReceivedEvent {val instance = this}
 
-final case class PhaseProcessingFailed(phase: State, exception: Throwable) extends ReceivedEvent
+case class PhaseProcessingFailed(phase: State, exception: Throwable) extends ReceivedEvent
 
-final case class FinalizedData(data: EmitableScala) extends SentEvent
+case class FinalizedData(data: EmitableScala) extends SentEvent
 
-final case class MapReducerFailure(cause: Any) extends Exception(cause.toString) with SentEvent
+case class MapReducerFailure(cause: Any) extends Exception(cause.toString) with SentEvent
 
 
 sealed trait State
@@ -96,8 +96,8 @@ case object FinalizePhase extends State
 sealed trait Data
 
 case object Uninitialized extends Data
-final case class EvaluatedScriptEngine(engine: ScriptEngineActor, args: Seq[String] = Seq.empty) extends Data
-final case class EmittedData(engine: ScriptEngineActor, data: Emitable) extends Data
+case class EvaluatedScriptEngine(engine: ScriptEngineActor, args: Seq[String] = Seq.empty) extends Data
+case class EmittedData(engine: ScriptEngineActor, data: Emitable) extends Data
 
 
 case class ScriptEngineActor(engine: Future[ScriptEngine], sender: ActorRef)

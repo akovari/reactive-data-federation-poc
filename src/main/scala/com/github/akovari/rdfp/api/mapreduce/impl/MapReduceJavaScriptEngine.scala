@@ -57,9 +57,10 @@ object MapReduceJavaScriptEngine extends MapReduceScriptEngine {
 //    engine.eval(load("js/bower_components/moment-timezone/builds/moment-timezone-with-data.min.js"))
     engine.eval(
       s"""
-         |var imports = new JavaImporter(com.redhat.gss.data, com.redhat.gss.unified.mapreduce, org.joda.time);
+         |var imports = new JavaImporter(com.github.akovari.rdfp.data, com.github.akovari.rdfp.api.mapreduce, org.joda.time);
          |var StringUtils = Java.type("org.apache.commons.lang.StringUtils");
          |var Collectors = Java.type("java.util.stream.Collectors");
+         |var Arrays = Java.type("java.util.Arrays");
          |
          |/*var cloneArray = function(aImmut) {
          | var Arrays = Java.type("java.util.Arrays");

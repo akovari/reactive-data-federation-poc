@@ -68,7 +68,7 @@ class CasesResourceImpl extends CasesResource {
           val physicalModels = q.fetch().asInstanceOf[Result[Record]].asScala.toSeq
 
           physicalModels.map { r =>
-            CaseLink(r.getValue(CASE_LINKS_T.ID).intValue(), r.getValue(CASE_LINKS_T.URL))
+            CaseLink(r.getValue(CASE_LINKS_T.ID).intValue(), r.getValue(CASE_LINKS_T.CASE_ID), r.getValue(CASE_LINKS_T.URL))
           }
       }
     }
