@@ -5,7 +5,7 @@ import spray.revolver.RevolverPlugin.Revolver
 import com.typesafe.sbt.SbtAspectj._
 
 
-object UnifiedDataServicesBuild extends Build {
+object ReactiveDataFederationPoCBuild extends Build {
   private val allResolvers = Seq(
     "Local Maven Repository" at "file:///" + Path.userHome + "/.m2/repository",
     "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases",
@@ -131,7 +131,9 @@ object UnifiedDataServicesBuild extends Build {
       //      slicRdfp <<= slickCodeGenTaskRdfp,
       jooqCodegenRdfp <<= jooqCodegenRdfpTask
     )
-  )
+  ) //.aggregate(benchmarks)
+
+//  lazy val benchmarks = project in file("benchmarks")
 
   // code generation tasks
   //  lazy val slicRdfp = TaskKey[Seq[File]]("gen-tables-rdfp")
