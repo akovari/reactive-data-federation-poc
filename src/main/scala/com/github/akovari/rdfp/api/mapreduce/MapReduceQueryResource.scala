@@ -1,10 +1,13 @@
 package com.github.akovari.rdfp.api.mapreduce
 
+import java.util.concurrent.TimeUnit
+
 import akka.actor.SupervisorStrategy.Escalate
 import akka.actor.{OneForOneStrategy, Props, TypedActor}
 import akka.event.Logging
 import akka.pattern._
 import akka.util.Timeout
+import com.github.akovari.rdfp.Configuration
 import com.github.akovari.rdfp.api.mapreduce.MapReduceModels._
 import com.github.akovari.rdfp.api.mapreduce.impl.MapReducer
 
@@ -19,7 +22,7 @@ trait MapReduceQueryResource {
 }
 
 class MapReduceQueryResourceImpl extends MapReduceQueryResource with TypedActor.Supervisor {
-  implicit val timeout = Timeout(5 seconds)
+  implicit val timeout = Timeout(Configuration().getDuration("mapreduce.queryTimeout", TimeUnit.SECONDS) seconds)
   implicit val executionContext = TypedActor.context.dispatcher
   private val log = Logging(TypedActor.context.system, TypedActor.context.self)
 

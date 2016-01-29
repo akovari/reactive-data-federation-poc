@@ -15,20 +15,20 @@ import scala.concurrent.ExecutionContext
   */
 
 trait Core {
-  implicit def system: ActorSystem
+  implicit val system: ActorSystem
 
-  implicit def materializer: Materializer
+  implicit val materializer: Materializer
 
   implicit val executionContext: ExecutionContext = system.dispatcher
 }
 
 
 trait BootedCore extends Core with Api {
-  implicit def system: ActorSystem = ActorSystem("rdfp")
+  implicit lazy val system: ActorSystem = ActorSystem("rdfp")
 
-  def actorRefFactory: ActorRefFactory = system
+  val actorRefFactory: ActorRefFactory = system
 
-  implicit def materializer: Materializer = ActorMaterializer()
+  implicit val materializer: Materializer = ActorMaterializer()
 
   val log = system.log
 
@@ -41,8 +41,15 @@ trait BootedCore extends Core with Api {
 trait CoreActors {
   this: Core =>
 
-  val casesResource: CasesResource = TypedActor(system).typedActorOf(TypedProps[CasesResourceImpl])
-  val mapReduceResource: MapReduceQueryResource = TypedActor(system).typedActorOf(TypedProps[MapReduceQueryResourceImpl])
+  def casesResource: () => CasesResource = {() =>
+    val r: CasesResource = TypedActor(system).typedActorOf(TypedProps[CasesResourceImpl])
+    r
+  }
+
+  def mapReduceResource: () => MapReduceQueryResource = {() =>
+    val r: MapReduceQueryResource = TypedActor(system).typedActorOf(TypedProps[MapReduceQueryResourceImpl])
+    r
+  }
 }
 
 trait Api extends Directives with CoreActors with Core {

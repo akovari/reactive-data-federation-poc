@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContext
 /**
   * Created by akovari on 07.11.15.
   */
-class CasesService(casesResource: CasesResource)(implicit executionContext: ExecutionContext, sfdcConn: SalesForceConnection)
+class CasesService(casesResource: (() => CasesResource))(implicit executionContext: ExecutionContext, sfdcConn: SalesForceConnection)
   extends Directives with Json4sSupport {
   implicit val serialization = jackson.Serialization // or native.Serialization
 
@@ -25,7 +25,7 @@ class CasesService(casesResource: CasesResource)(implicit executionContext: Exec
       caseNumber =>
         get {
           complete {
-            casesResource.getCase(caseNumber)
+            casesResource().getCase(caseNumber)
           }
         }
     } ~ path("cases" / "links") {
@@ -34,7 +34,7 @@ class CasesService(casesResource: CasesResource)(implicit executionContext: Exec
           complete {
             implicit val offset: Option[UnifiedQueryOffset] = None
             implicit val limit: Option[UnifiedQueryLimit] = None
-            casesResource.getCaseLinksByFilter(UQLParser.parseUQL( s"""entity = "${ResourceType.SupportCase}" and $uql"""))
+            casesResource().getCaseLinksByFilter(UQLParser.parseUQL( s"""entity = "${ResourceType.SupportCase}" and $uql"""))
           }
         }
       }
@@ -42,7 +42,7 @@ class CasesService(casesResource: CasesResource)(implicit executionContext: Exec
       parameter("where") { uql =>
         get {
           complete {
-            casesResource.getCasesByFilter(
+            casesResource().getCasesByFilter(
               UQLContext.conditionToSOQLConditionWithoutLimit(
                 UQLParser.parseUQL( s"""entity = "${ResourceType.SupportCase}" and $uql""").condition
               )(UnifiedResultFromResourceType(ResourceType.SupportCase)))

@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext
 /**
   * Created by akovari on 07.11.15.
   */
-class MapReduceService(mapReduceResource: MapReduceQueryResource)(implicit executionContext: ExecutionContext, materializer: Materializer)
+class MapReduceService(mapReduceResource: (() => MapReduceQueryResource))(implicit executionContext: ExecutionContext, materializer: Materializer)
   extends Directives with Json4sSupport {
   implicit val serialization = jackson.Serialization // or native.Serialization
 
@@ -27,7 +27,7 @@ class MapReduceService(mapReduceResource: MapReduceQueryResource)(implicit execu
               decodeRequest {
                 entity(as[String]) { body =>
                   complete {
-                    mapReduceResource.evaluate(body, params.map(_._2))
+                    mapReduceResource().evaluate(body, params.map(_._2))
                   }
                 }
               }

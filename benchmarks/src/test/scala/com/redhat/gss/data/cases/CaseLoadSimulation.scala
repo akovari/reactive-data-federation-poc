@@ -12,7 +12,7 @@ import spray.http.MediaTypes._
  * Time: 10:33 AM
  */
 class CaseLoadSimulation extends Simulation {
-  val cases = Seq("00001002", "00001016", "00001024")
+  val cases = Seq.fill(1)(Seq("00001002", "00001016", "00001024")).flatten
 
   val httpProtocol = http
     .baseURL("http://localhost:8080")
