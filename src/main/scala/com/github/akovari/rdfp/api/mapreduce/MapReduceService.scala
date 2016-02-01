@@ -1,5 +1,6 @@
 package com.github.akovari.rdfp.api.mapreduce
 
+import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.unmarshalling.Unmarshaller._
 import akka.stream.Materializer
@@ -12,7 +13,7 @@ import scala.concurrent.ExecutionContext
 /**
   * Created by akovari on 07.11.15.
   */
-class MapReduceService(mapReduceResource: (() => MapReduceQueryResource))(implicit executionContext: ExecutionContext, materializer: Materializer)
+class MapReduceService(mapReduceResource: (() => MapReduceQueryResource))(implicit executionContext: ExecutionContext, materializer: Materializer, actorSystem: ActorSystem)
   extends Directives with Json4sSupport {
   implicit val serialization = jackson.Serialization // or native.Serialization
 
@@ -27,7 +28,9 @@ class MapReduceService(mapReduceResource: (() => MapReduceQueryResource))(implic
               decodeRequest {
                 entity(as[String]) { body =>
                   complete {
-                    mapReduceResource().evaluate(body, params.map(_._2))
+                    withResource(mapReduceResource()) {
+                      _.evaluate(body, params.map(_._2))
+                    }
                   }
                 }
               }

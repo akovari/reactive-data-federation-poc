@@ -6,7 +6,8 @@ package com.github.akovari.rdfp.data
 object Models {
 
   case class Case(caseNumber: String,
-                  status: String)
+                  status: String,
+                  links: Seq[CaseLink])
 
   case class CaseLink(id: Int, caseNumber: String, url: String)
 

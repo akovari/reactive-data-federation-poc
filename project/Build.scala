@@ -47,7 +47,7 @@ object ReactiveDataFederationPoCBuild extends Build {
   val jaxrsV = "2.0"
   val parboiledV = "1.1.6"
   val jooqV = "3.7.0"
-  val postgresV = "9.4-1205-jdbc41"
+  val postgresV = "9.4.1207"
   val aspectjV = "1.8.5"
   val asyncV = "0.9.2"
   val hikariCPV = "2.3.6"

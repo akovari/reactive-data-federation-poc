@@ -16,14 +16,14 @@ import scala.collection.JavaConverters._
 import com.github.akovari.rdfp.data.Models._
 import com.github.akovari.typesafeSalesforce.{query => sfquery}
 import com.github.akovari.rdfp.data.cases.PostgresQueryCache._
-import com.github.akovari.rdfp.api.ql.UQLContext
+import com.github.akovari.rdfp.api.ql.{UQLParser, UQLContext}
 import com.github.akovari.rdfp.api.ql.db.SQLTables._
 
 /**
   * Created by akovari on 06.11.15.
   */
 trait CasesResource {
-  def getCase(caseNumber: String)(implicit conn: SalesForceConnection): Future[Case]
+  def getCase(caseNumber: String)(implicit conn: SalesForceConnection): Future[Option[Case]]
 
   def getCasesByFilter(filter: sfquery.Filter)(implicit conn: SalesForceConnection): Future[Seq[Case]]
 
@@ -31,28 +31,39 @@ trait CasesResource {
 }
 
 class CasesResourceImpl extends CasesResource {
+
   import UQLContext._
 
   implicit val executionContext = TypedActor.context.dispatcher
   private implicit val log = Logging(TypedActor.context.system, TypedActor.context.self)
 
-  override def getCase(caseNumber: String)(implicit conn: SalesForceConnection): Future[Case] = {
+  override def getCase(caseNumber: String)(implicit conn: SalesForceConnection): Future[Option[Case]] = {
     import sfquery._
     val q = SalesForceQueryCache.caseQueryWithFilter(Case_.caseNumber :== caseNumber, None)
     log.debug(s"[getCase] $q")
 
-    conn.query(q).mapTo[Seq[enterprise.Case]].map(_.head).map { c =>
-      Case(c.getCaseNumber, c.getStatus)
-    }
+    for {
+      cases <- conn.query(q).mapTo[Seq[enterprise.Case]]
+      links <- getCaseLinksByFilter(UQLParser.parseUQL( s"""entity = "${ResourceType.SupportCase}" and caseId in [${
+        cases.map(_.getCaseNumber).map(c => s""""$c"""").mkString(",")
+      }]"""))(None, None)
+    } yield cases.map { c =>
+      Case(c.getCaseNumber, c.getStatus, links = links.filter(_.caseNumber == c.getCaseNumber))
+    }.headOption
   }
 
   override def getCasesByFilter(filter: sfquery.Filter)(implicit conn: SalesForceConnection): Future[Seq[Case]] = {
     val q = SalesForceQueryCache.caseQueryWithFilter(filter, None)
     log.debug(s"[getCaseLinksByFilter] $q")
 
-    conn.query(q).mapTo[Seq[enterprise.Case]].map(_.map { c =>
-      Case(c.getCaseNumber, c.getStatus)
-    })
+    for {
+      cases <- conn.query(q).mapTo[Seq[enterprise.Case]]
+      links <- getCaseLinksByFilter(UQLParser.parseUQL( s"""entity = "${ResourceType.SupportCase}" and caseId in [${
+        cases.map(_.getCaseNumber).map(c => s""""$c"""").mkString(",")
+      }]"""))(None, None)
+    } yield cases.map { c =>
+      Case(c.getCaseNumber, c.getStatus, links = links.filter(_.caseNumber == c.getCaseNumber))
+    }
   }
 
   override def getCaseLinksByFilter(filter: Filter)(implicit offset: Option[UnifiedQueryOffset], limit: Option[UnifiedQueryLimit]): Future[Seq[CaseLink]] = {
